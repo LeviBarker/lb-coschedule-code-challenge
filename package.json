@@ -1,0 +1,20 @@
+{
+  "name": "levi-barker-code-challenge",
+  "version": "1.0.0",
+  "description": "Coding challenge for CoSchedule",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeviBarker/levi-barker-code-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeviBarker/levi-barker-code-challenge/issues"
+  },
+  "homepage": "https://github.com/LeviBarker/levi-barker-code-challenge#readme"
+}
