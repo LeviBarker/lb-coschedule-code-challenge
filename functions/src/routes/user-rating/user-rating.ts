@@ -9,5 +9,5 @@ export const router = Router({
  * @description Facade for User Rating object
  */
 router.patch("/rate", async (req: Request, res: Response) => {
-  await userRatingController.rateFacade(req, res);
+  await userRatingController.updateOrInsert(req, res);
 });

@@ -1,7 +1,7 @@
 <main id="app-container">
   <mat-toolbar id="app-toolbar">
     <div>
-      <span>Search</span>&nbsp;
+      <span>🔎</span>&nbsp;
       <span class="mat-caption">powered by GIPHY</span>
     </div>
     <div>
@@ -9,52 +9,10 @@
     </div>
   </mat-toolbar>
   <section id="app-content">
-    <mat-card>
-      <div class="search-container">
-        <div class="search-input-container">
-          <mat-form-field class="full-width-form-field">
-            <input matInput placeholder="GIPHY Search" (keydown.enter)="handleSearch()" [value]="searchValue"
-              (input)="handleSearchInput($event)">
-          </mat-form-field>
-        </div>
-        <button mat-button (click)="handleSearch()">
-          <mat-icon>search</mat-icon>
-          <span>Search</span>
-        </button>
-      </div>
-    </mat-card>
-    <div class="results-container">
-      <div *ngIf="searchIsLoading; else resultsTemplate" class="loading-container">
-        <mat-spinner></mat-spinner>
-      </div>
-    </div>
+    <router-outlet></router-outlet>
   </section>
 </main>
 
 <ng-template #signInTemplate>
-  <button mat-button (click)="auth.googleSignIn()">Sign In</button>
-</ng-template>
-
-<ng-template #resultsTemplate>
-  <mat-card class="result" *ngFor="let result of results">
-    <img class="result-image" [src]="result?.images?.preview_gif.url" />
-    <div class="result-content">
-      <div>
-        <p class="mat-subtitle">{{result?.title || 'No name'}}</p>
-        <p class="mat-caption" *ngIf="result?.username">Uploaded by {{result.username}}</p>
-      </div>
-      <div class="result-actions">
-        <!-- <button mat-button>
-          <mat-icon>launch</mat-icon>
-        </button>
-        <button mat-button color="primary">
-          <mat-icon>comment</mat-icon>
-        </button> -->
-        <button mat-button color="warn" (click)="handleLikeClick(result)">
-          <mat-icon>{{result?.liked ? 'favorite' : 'favorite_border'}}</mat-icon>&nbsp;
-          <span class="action-description">{{result?.firebaseMetadata?.likes?.length}}</span>
-        </button>
-      </div>
-    </div>
-  </mat-card>
+  <button mat-button (click)="openLoginDialog()">Sign In</button>
 </ng-template>

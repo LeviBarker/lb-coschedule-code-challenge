@@ -8,6 +8,10 @@ const SEARCH_URI = "search";
 export class SearchService {
   constructor(private http: HttpClient) { }
 
+  getById(id: string){
+    return this.http.get(`${environment.baseAPIPath}${SEARCH_URI}/${id}`);
+  }
+
   search(text: string) {
       return this.http.get(`${environment.baseAPIPath}${SEARCH_URI}?text=${text}`);
   }

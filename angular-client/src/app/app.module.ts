@@ -19,10 +19,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+
+import {NgPipesModule} from 'ngx-pipes';
+
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { HomeComponent } from './routes/home/home.component';
+import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.component';
+import { ItemComponent } from './routes/item/item.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginDialogComponent,
+    HomeComponent,
+    PageNotFoundComponent,
+    ItemComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +43,7 @@ import { MatRippleModule } from '@angular/material/core';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     BrowserAnimationsModule,
+    NgPipesModule,
     MatSnackBarModule,
     MatButtonModule,
     MatToolbarModule,
@@ -39,7 +52,8 @@ import { MatRippleModule } from '@angular/material/core';
     MatIconModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatRippleModule
+    MatRippleModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

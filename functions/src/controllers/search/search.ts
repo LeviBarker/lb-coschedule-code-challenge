@@ -90,4 +90,35 @@ export class SearchController {
       throw new Error("Unable to get GIPHY response");
     }
   }
+
+  /**
+   * Get Giphy object by ID with metadata
+   * @param req
+   * @param res
+   */
+  async getGifById(req: Request, res: Response): Promise<void> {
+    try {
+      const id: string = req.params?.id;
+      const giphyResponse: AxiosResponse = await axios.get(`https://api.giphy.com/v1/gifs/${id}`, {
+        params: {
+          ...BASE_PARAMS,
+          q: req.query.text
+        }
+      });
+
+      const { data }: { data: any } = giphyResponse.data;
+      const comments = (await firestore.collection("comments")
+        .where("source_id", "==", id).get()).docs.map((doc: any) => (
+          {
+            id: doc.id,
+            ...doc.data()
+          }
+        ));
+
+      data.comments = comments;
+      res.send(data);
+    } catch (err) {
+      throw new Error("Unable to get GIPHY response");
+    }
+  }
 }

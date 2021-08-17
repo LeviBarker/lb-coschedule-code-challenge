@@ -30,9 +30,7 @@ module.exports = {
     "object-curly-spacing": [2, "always"],
     "comma-dangle": ["error", "never"],
     "new-cap": ["error", { "capIsNew": false }],
-    "indent": ["error", 2, {
-      "ignoreComments": true
-    }],
+    "indent": 0,
     "valid-jsdoc": 0,
     "@typescript-eslint/no-explicit-any": "off"
   }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CRUDController } from "../crud-controller";
 import { firebaseApp } from "../../admin";
+import { omit } from "lodash";
 import { getDecodedToken } from "../../auth";
 
 const auth = firebaseApp.auth();
@@ -26,7 +27,7 @@ export class UserRatingController implements CRUDController {
             });
             console.log("inserted");
             res.send((await result.get()).data());
-        } catch(err) {
+        } catch (err) {
             res.send(err);
         }
     }
@@ -68,22 +69,41 @@ export class UserRatingController implements CRUDController {
         throw new Error("Method not implemnented");
     }
 
-    async rateFacade(req: Request, res: Response): Promise<void> {
+    async updateOrInsert(req: Request, res: Response) {
         const decodedIdToken = await getDecodedToken(req);
-        if(!decodedIdToken?.uid){
+        if (!decodedIdToken?.uid) {
             res.status(401).send("Unauthorized");
             return;
         }
-
-        req.params.userId = decodedIdToken.uid;
-
-        const firebaseItemId: string = req.body?.firebaseMetadata?.id;
-        
-        if(firebaseItemId){
-            this.update(req, res);
+        const liked: boolean = req.body?.liked;
+        const collectionRef = firestore.collection("item_metadata");
+        const queryRef = collectionRef
+            .where("source_id", "==", req.body.source_id)
+            .where("source", "==", req.body.source);
+        let result: any = (await queryRef.get()).docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        }))?.[0];
+        if (result) {
+            const likeSet = new Set([...(result?.likes || [])]);
+            if (liked) {
+                likeSet.add(decodedIdToken.uid);
+            } else {
+                likeSet.delete(decodedIdToken.uid);
+            }
+            result.likes = Array.from(likeSet);
+            await collectionRef.doc(result.id).set(omit(result, ["id"]));
         } else {
-            await this.create(req, res);
+            result = {
+                source_id: req.body.source_id,
+                source: req.body.source,
+                likes: [decodedIdToken.uid]
+            }
+            result = (await (await collectionRef.add(result)).get()).data();
         }
+
+        res.send(result);
     }
+
     /* eslint-enable */
 }
