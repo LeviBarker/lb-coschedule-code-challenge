@@ -33,10 +33,11 @@
           </button> -->
           <button mat-button color="primary" (click)="handleCommentClick(result)">
             <mat-icon>comment</mat-icon>
+            <span *ngIf="result?.firebaseMetadata?.numberOfComments as numberOfComments">&nbsp;{{numberOfComments}}</span>
           </button>
           <button mat-button color="warn" (click)="handleLikeClick(result)">
-            <mat-icon>{{result?.liked ? 'favorite' : 'favorite_border'}}</mat-icon>&nbsp;
-            <span *ngIf="result?.firebaseMetadata?.likes?.length as likes">{{likes}}</span>
+            <mat-icon>{{result?.liked ? 'favorite' : 'favorite_border'}}</mat-icon>
+            <span *ngIf="result?.firebaseMetadata?.likes?.length as likes">&nbsp;{{likes}}</span>
           </button>
         </div>
       </div>

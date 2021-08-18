@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import axios, { AxiosResponse } from "axios";
 import * as functions from "firebase-functions";
-import { firebaseApp } from "../../admin";
 import { chunk } from "lodash";
+import { FirebaseDAOAdapter } from "../../dao/firestore-dao-adapter";
 
 const BASE_PARAMS = {
   "api_key": functions.config().giphy.key,
@@ -11,7 +11,6 @@ const BASE_PARAMS = {
   "limit": 25,
   "offset": 0
 };
-const firestore: FirebaseFirestore.Firestore = firebaseApp.firestore();
 
 /**
  * @description SearchController
@@ -32,22 +31,26 @@ export class SearchController {
    * @param {chunks}
    * @returns
    */
-  private async buildSourceMap(chunks: any[][]) {
-    const collectionResultMap: any = {};
+  private async buildSourceMap(chunks: any[][]): Promise<any> {
+    const collectionValueMap: any = {};
 
     await Promise.all(chunks.map(async (chunk: any[]) => {
-      const collectionRef = firestore
-        .collection("item_metadata").where("source_id", "in", chunk);
-      const docs = (await collectionRef.get()).docs;
-      docs.forEach((doc: any) => {
-        const docData = doc.data();
-        collectionResultMap[docData.source_id] = {
-          id: doc.id,
-          ...docData
-        };
-      });
+      const data: any = await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [
+        {
+          field: "sourceId",
+          operator: "in",
+          value: chunk
+        }
+      ]);
+
+      if(data?.sourceId){
+        collectionValueMap[data.sourceId] = data;
+      }
+
+      return data;
     }));
-    return collectionResultMap;
+  
+    return collectionValueMap;
   }
 
   /**
@@ -81,10 +84,12 @@ export class SearchController {
 
       const { data }: { data: any[] } = giphyResponse.data;
       const chunks: any[][] = this.getIdChunksFromData(data);
+
       const collectionResultMap: any = await this.buildSourceMap(chunks);
 
       res.send({
-        data: this.mergeDataWithSourceMap(collectionResultMap, data)
+        data: this.mergeDataWithSourceMap(collectionResultMap, data),
+        collectionResultMap
       });
     } catch (err) {
       throw new Error("Unable to get GIPHY response");
@@ -107,13 +112,12 @@ export class SearchController {
       });
 
       const { data }: { data: any } = giphyResponse.data;
-      const comments = (await firestore.collection("comments")
-        .where("source_id", "==", id).get()).docs.map((doc: any) => (
-          {
-            id: doc.id,
-            ...doc.data()
-          }
-        ));
+
+      const comments: Comment[] = await FirebaseDAOAdapter.getCollectionValues("comments", [{
+        field: "sourceId",
+        operator: "==",
+        value: id
+      }]);
 
       data.comments = comments;
       res.send(data);

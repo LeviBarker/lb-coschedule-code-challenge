@@ -26,6 +26,8 @@ module.exports = {
   ],
   rules: {
     "quotes": ["error", "double"],
+    "no-trailing-spaces": 0,
+    "linebreak-style": 0,
     "import/no-unresolved": 0,
     "object-curly-spacing": [2, "always"],
     "comma-dangle": ["error", "never"],

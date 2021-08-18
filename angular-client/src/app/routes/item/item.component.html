@@ -7,17 +7,10 @@
         <div class="item-container" *ngIf="item">
             <div class="item-inner-container">
                 <img class="banner-image" [src]="item.images.original.url" />
-                <span class="mat-title">{{item.title}}</span>
+                <div class="mat-title item-title">{{item.title}}</div>
                 <div>
-                    <div style="display: flex; flex-direction: column;">
-                        <mat-form-field appearance="outline">
-                            <mat-label>Comment</mat-label>
-                            <textarea matInput [value]="message" (input)="handleMessageInput($event)"></textarea>
-                          </mat-form-field>
-                        <button mat-raised-button color="primary" (click)="handleAddComment()">
-                            Add comment
-                        </button>
-                    </div>
+                    <app-comment-input [sourceId]="sourceId" (onCommentAdded)="handleCommentAdded($event)">
+                    </app-comment-input>
                     <ng-container *ngIf="auth.user$ | async as user; else commentsTemplate">
                         <ng-container *ngTemplateOutlet="commentsTemplate; context: user"></ng-container>
                     </ng-container>
@@ -28,15 +21,8 @@
 </div>
 
 <ng-template #commentsTemplate let-uid="uid">
-    <app-comment *ngFor="let comment of item.comments" 
-        [comment]="comment" 
-        [uid]="uid"
-        (onDeleteClick)="handleDeleteClick($event)">
+    <app-comment *ngFor="let comment of item.comments" [comment]="comment" [uid]="uid"
+        [editing]="comment.id === editingCommentId" (onDeleteClick)="handleDeleteClick($event)"
+        (onEditClick)="handleEditClick($event)">
     </app-comment>
-    <!-- <div class="comment" *ngFor="let comment of item.comments">
-        <div class="mat-body-strong">{{comment.author}}</div>
-        <div class="mat-caption">{{comment.timestamp._seconds * 1000 | date}}</div>
-        <p>{{comment.body}}</p>
-        <button *ngIf="uid === comment.uid" mat-stroked-button (click)="handleDeleteClick(comment)">Delete</button>
-     </div> -->
 </ng-template>

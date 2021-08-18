@@ -21,6 +21,7 @@ export class ItemComponent implements OnInit {
   item: any;
   message: string = '';
   dialogRef: MatDialogRef<any> | null = null;
+  editingCommentId: string | null = null;
 
   constructor(private route: ActivatedRoute,
      private router: Router, 
@@ -45,26 +46,11 @@ export class ItemComponent implements OnInit {
     this.router.navigate(['./search']);
   }
 
-  openLoginDialog() {
-    this.dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '250px',
-      data: {}
-    });
-  }
-
-  async handleAddComment(){
-    const user = await this.auth.user$.pipe(take(1)).toPromise();
-    if(user){
-      const res = await this.commentsService.create({body: this.message, sourceId: this.sourceId}).pipe(take(1)).toPromise();
+  async handleCommentAdded(event: any){
     if(!this.item.comments){
       this.item.comments = [];
     }
-    this.item.comments = orderBy([...this.item.comments, res], ['timestamp._seconds'], ['desc']);
-    this.message = '';
-    } else {
-      this.openLoginDialog();
-    }
-    
+    this.item.comments = orderBy([...this.item.comments, event], ['timestamp._seconds'], ['desc']);
   }
 
   handleMessageInput(event: any){
@@ -73,11 +59,15 @@ export class ItemComponent implements OnInit {
 
   async handleDeleteClick(id: string): Promise<void> {
     const res: any = await this.commentsService.delete(id).pipe(take(1)).toPromise();
-    if(res._writeTime){
+    if(res.deleted){
       this.item.comments = this.item.comments.filter((_comment: any) => {
         return id !== _comment.id;
       });
     }
+  }
+
+  handleEditClick(id: string | null){
+    this.editingCommentId = id;
   }
 
 }

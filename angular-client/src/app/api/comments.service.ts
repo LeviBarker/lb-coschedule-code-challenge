@@ -32,6 +32,21 @@ export class CommentsService {
   }
 
   /**
+   * API call to create comment
+   * @param comment 
+   * @returns 
+   */
+   update(comment: Partial<Comment>): Observable<Comment> {
+    return this.auth.token$?.pipe(switchMap((token: any) => {
+      const headers: any = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      return this.http.put(`${environment.baseAPIPath}${COMMENTS_URI}`, comment, { headers });
+    })) as Observable<Comment>;
+  }
+
+  /**
    * API call to delete comment by ID
    * @param id 
    * @returns 

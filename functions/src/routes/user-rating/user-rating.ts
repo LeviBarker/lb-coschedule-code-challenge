@@ -6,6 +6,7 @@ export const router = Router({
   strict: true
 });
 
+// Authorize this route
 router.use(tokenMiddleware);
 
 router.patch("/rate", (req: Request, res: Response) => {
