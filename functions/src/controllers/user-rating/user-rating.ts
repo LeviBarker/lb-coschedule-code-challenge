@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { CRUDController } from "../crud-controller";
 import { firebaseApp } from "../../admin";
 import { omit } from "lodash";
-import { getDecodedToken } from "../../auth";
 
 const auth = firebaseApp.auth();
 const firestore = firebaseApp.firestore();
+firestore.settings({ ignoreUndefinedProperties: true });
 
 /**
  * @description UserRatingController
@@ -25,7 +25,6 @@ export class UserRatingController implements CRUDController {
                 source: req.body.source,
                 likes: liked ? [req.params.userId] : []
             });
-            console.log("inserted");
             res.send((await result.get()).data());
         } catch (err) {
             res.send(err);
@@ -70,15 +69,11 @@ export class UserRatingController implements CRUDController {
     }
 
     async updateOrInsert(req: Request, res: Response) {
-        const decodedIdToken = await getDecodedToken(req);
-        if (!decodedIdToken?.uid) {
-            res.status(401).send("Unauthorized");
-            return;
-        }
         const liked: boolean = req.body?.liked;
+        const uid: string = (req as any).uid;
         const collectionRef = firestore.collection("item_metadata");
         const queryRef = collectionRef
-            .where("source_id", "==", req.body.source_id)
+            .where("source_id", "==", req.body.sourceId)
             .where("source", "==", req.body.source);
         let result: any = (await queryRef.get()).docs.map((doc) => ({
             id: doc.id,
@@ -87,17 +82,17 @@ export class UserRatingController implements CRUDController {
         if (result) {
             const likeSet = new Set([...(result?.likes || [])]);
             if (liked) {
-                likeSet.add(decodedIdToken.uid);
+                likeSet.add(uid);
             } else {
-                likeSet.delete(decodedIdToken.uid);
+                likeSet.delete(uid);
             }
             result.likes = Array.from(likeSet);
             await collectionRef.doc(result.id).set(omit(result, ["id"]));
         } else {
             result = {
-                source_id: req.body.source_id,
+                source_id: req.body.sourceId,
                 source: req.body.source,
-                likes: [decodedIdToken.uid]
+                likes: [uid]
             }
             result = (await (await collectionRef.add(result)).get()).data();
         }

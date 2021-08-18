@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
+import { tokenMiddleware } from "../../auth";
 import { userRatingController } from "../../controllers";
 
 export const router = Router({
   strict: true
 });
 
-/**
- * @description Facade for User Rating object
- */
-router.patch("/rate", async (req: Request, res: Response) => {
-  await userRatingController.updateOrInsert(req, res);
+router.use(tokenMiddleware);
+
+router.patch("/rate", (req: Request, res: Response) => {
+  userRatingController.updateOrInsert(req, res);
 });

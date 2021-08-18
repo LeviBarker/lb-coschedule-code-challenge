@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -30,37 +30,41 @@ export class HomeComponent implements OnInit {
     public userRatingService: UserRatingService,
     public auth: AuthService,
     public router: Router) {
-    this.auth.user$.subscribe(() => {
-      this.handleSearch();
-    });
+    this.subscribeToAuthChange();
   }
 
   ngOnInit(): void {
     this.applyStorageValue();
   }
 
-  applyStorageValue(){
+  subscribeToAuthChange(): void {
+    this.auth.user$.subscribe(() => {
+      this.handleSearch();
+    });
+  }
+
+  applyStorageValue(): void {
     const storageValue = localStorage.getItem("searchValue");
-    if(storageValue){
+    if (storageValue) {
       this.searchValue = storageValue;
       this.handleSearch();
     }
   }
 
 
-  openLoginDialog() {
+  openLoginDialog(): void {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '250px',
       data: {}
     });
   }
 
-  handleSearchInput(ev: any) {
+  handleSearchInput(ev: any): void {
     this.searchValue = ev.target.value;
     localStorage.setItem("searchValue", this.searchValue);
   }
 
-  async handleSearch() {
+  async handleSearch(): Promise<void> {
     this.searchIsLoading = true;
 
     try {
@@ -74,7 +78,7 @@ export class HomeComponent implements OnInit {
     this.searchIsLoading = false;
   }
 
-  async handleLikeClick(result: any) {
+  async handleLikeClick(result: any): Promise<void> {
     if (result._disabled) {
       return;
     }
@@ -83,36 +87,36 @@ export class HomeComponent implements OnInit {
     const user = await this.auth.user$.pipe(take(1)).toPromise();
     if (user) {
       result.liked = !result.liked;
-      const likes = result?.firebaseMetadata?.likes;
-      const likeSet = new Set([...(likes || [])]);
-      if (result.liked) {
-        likeSet.add(user.uid);
-      } else {
-        likeSet.delete(user.uid);
-      }
-      set(result, "firebaseMetadata.likes", Array.from(likeSet));
+      set(result, "firebaseMetadata.likes", this.processLikes(result.liked, result?.firebaseMetadata?.likes, user.uid));
       this.userRatingService.rateItem({
-        "source_id": result.id,
+        sourceId: result.id,
         source: "giphy",
         liked: result.liked
       })
         .pipe(take(1), finalize(() => {
           result._disabled = false;
         }))
-        .subscribe((res) => {
-          // console.log({res});
-        });
+        .subscribe((res) => { });
     } else {
       this.openLoginDialog();
     }
   }
 
-  handleCommentClick(result: any) {
-    console.log(result);
+  handleCommentClick(result: any): void {
     this.router.navigate([`./item`], { queryParams: { sourceId: result.id, source: 'giphy' } });
   }
 
-  processSearchResults(uid: string, data: any[]) {
+  processLikes(liked: boolean, likes: any[], uid: string): string[] {
+    const likeSet = new Set([...(likes || [])]);
+    if (liked) {
+      likeSet.add(uid);
+    } else {
+      likeSet.delete(uid);
+    }
+    return Array.from(likeSet);
+  }
+
+  processSearchResults(uid: string, data: any[]): any[] {
     if (!uid) {
       return data;
     }

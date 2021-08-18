@@ -55,7 +55,7 @@ export class ItemComponent implements OnInit {
   async handleAddComment(){
     const user = await this.auth.user$.pipe(take(1)).toPromise();
     if(user){
-      const res = await this.commentsService.create({message: this.message, sourceId: this.sourceId}).pipe(take(1)).toPromise();
+      const res = await this.commentsService.create({body: this.message, sourceId: this.sourceId}).pipe(take(1)).toPromise();
     if(!this.item.comments){
       this.item.comments = [];
     }
@@ -71,11 +71,11 @@ export class ItemComponent implements OnInit {
     this.message = event.target.value;
   }
 
-  async handleDeleteClick(comment: any){
-    const res: any = await this.commentsService.delete(comment.id).pipe(take(1)).toPromise();
+  async handleDeleteClick(id: string): Promise<void> {
+    const res: any = await this.commentsService.delete(id).pipe(take(1)).toPromise();
     if(res._writeTime){
       this.item.comments = this.item.comments.filter((_comment: any) => {
-        return comment.id !== _comment.id;
+        return id !== _comment.id;
       });
     }
   }

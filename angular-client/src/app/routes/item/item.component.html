@@ -28,10 +28,15 @@
 </div>
 
 <ng-template #commentsTemplate let-uid="uid">
-    <div class="comment" *ngFor="let comment of item.comments">
+    <app-comment *ngFor="let comment of item.comments" 
+        [comment]="comment" 
+        [uid]="uid"
+        (onDeleteClick)="handleDeleteClick($event)">
+    </app-comment>
+    <!-- <div class="comment" *ngFor="let comment of item.comments">
         <div class="mat-body-strong">{{comment.author}}</div>
         <div class="mat-caption">{{comment.timestamp._seconds * 1000 | date}}</div>
         <p>{{comment.body}}</p>
         <button *ngIf="uid === comment.uid" mat-stroked-button (click)="handleDeleteClick(comment)">Delete</button>
-     </div>
+     </div> -->
 </ng-template>

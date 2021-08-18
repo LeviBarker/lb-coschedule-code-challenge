@@ -27,6 +27,8 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
 import { HomeComponent } from './routes/home/home.component';
 import { PageNotFoundComponent } from './routes/page-not-found/page-not-found.component';
 import { ItemComponent } from './routes/item/item.component';
+import { CommentComponent } from './components/comment/comment.component';
+import { CommentInputComponent } from './components/comment-input/comment-input.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { ItemComponent } from './routes/item/item.component';
     LoginDialogComponent,
     HomeComponent,
     PageNotFoundComponent,
-    ItemComponent
+    ItemComponent,
+    CommentComponent,
+    CommentInputComponent
   ],
   imports: [
     BrowserModule,

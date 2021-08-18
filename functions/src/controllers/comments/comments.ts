@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { firebaseApp, timestamp } from "../../admin";
-import { getDecodedToken } from "../../auth";
 
 const firestore: FirebaseFirestore.Firestore = firebaseApp.firestore();
 
@@ -14,21 +13,18 @@ export class CommentsController {
    * @returns
    */
   async create(req: Request, res: Response): Promise<void> {
-    const decodedIdToken = await getDecodedToken(req);
-    if (!decodedIdToken?.uid) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-
-    const body: string = req.body?.message;
+    const body: string = req.body?.body;
     const sourceId: string = req.body?.sourceId;
+    const name = (req as any).name;
+    const uid = (req as any).uid;
+    const email = (req as any).email;
 
     if (body && sourceId) {
       const documentRef = await firestore.collection("comments").add({
-        author: decodedIdToken.displayName || decodedIdToken.email,
-        uid: decodedIdToken.uid,
+        author: name || email,
         timestamp: timestamp.now(),
         source_id: sourceId,
+        uid,
         body
       });
       const dataRef = await documentRef.get();
@@ -48,18 +44,13 @@ export class CommentsController {
    * @returns
    */
   async delete(req: Request, res: Response): Promise<void> {
-    const decodedIdToken = await getDecodedToken(req);
-    if (!decodedIdToken?.uid) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-
     const commentId: string = req.params.id;
+    const uid: string = (req as any).uid;
 
     if (commentId) {
       const docRef = firestore.collection("comments").doc(commentId);
       const data: any = (await docRef.get()).data();
-      if (data.uid !== decodedIdToken.uid) {
+      if (data.uid !== uid) {
         res.status(403).send("Forbidden");
         return;
       }

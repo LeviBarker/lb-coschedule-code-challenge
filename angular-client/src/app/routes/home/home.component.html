@@ -24,8 +24,8 @@
       <img class="result-image" [src]="result?.images?.preview_gif.url" />
       <div class="result-content">
         <div>
-          <p class="mat-subtitle">{{result?.title || 'No name'}}</p>
-          <p class="mat-caption" *ngIf="result?.username">Uploaded by {{result.username}}</p>
+          <div class="mat-body-strong">{{result?.title || 'No name'}}</div>
+          <div class="mat-caption" *ngIf="result?.username">Uploaded by {{result.username}}</div>
         </div>
         <div class="result-actions">
           <!-- <button mat-button>

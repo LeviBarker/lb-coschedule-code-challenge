@@ -14,12 +14,16 @@ export class LoginDialogComponent {
     public dialogRef: MatDialogRef<LoginDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public auth: AuthService) {
-      this.auth.user$.subscribe((user) => {
-        if(user){
-          this.dialogRef.close();
-        }
-      })
-    }
+    this.subscribeToAuthChange();
+  }
+
+  subscribeToAuthChange(): void {
+    this.auth.user$.subscribe((user) => {
+      if (user) {
+        this.dialogRef.close();
+      }
+    });
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
