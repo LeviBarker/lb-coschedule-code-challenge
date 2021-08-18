@@ -3,13 +3,11 @@ import { timestamp } from "../../admin";
 import { FirebaseDAOAdapter } from "../../dao/firestore-dao-adapter";
 import { Comment } from "../../models/comment";
 import { get } from "lodash";
-import * as functions from "firebase-functions";
 
 /**
  * @description CommentsController
  */
 export class CommentsController {
-
   /**
    * @param req
    * @param res
@@ -22,7 +20,8 @@ export class CommentsController {
     const email = (req as any).email;
 
     if (comment.body && comment.sourceId) {
-      const data: Comment = await FirebaseDAOAdapter.addDocument<Comment>("comments", {
+      const data: Comment = await FirebaseDAOAdapter
+        .addDocument<Comment>("comments", {
         author: name || email,
         timestamp: timestamp.now(),
         sourceId: comment.sourceId,
@@ -60,7 +59,8 @@ export class CommentsController {
   async update(req: Request, res: Response): Promise<void> {
     const comment: Comment = req.body;
     if (comment.id) {
-      const data: Comment = await FirebaseDAOAdapter.updateDocument<Comment>("comments", comment);
+      const data: Comment = 
+        await FirebaseDAOAdapter.updateDocument<Comment>("comments", comment);
       res.send(data);
       return;
     }
@@ -78,21 +78,29 @@ export class CommentsController {
     const uid: string = (req as any).uid;
 
     if (id) {
-      const comment: Comment = await FirebaseDAOAdapter.getDocumentData("comments", id) as Comment;
+      const comment: Comment = 
+        await FirebaseDAOAdapter.getDocumentData("comments", id) as Comment;
       if (comment.uid !== uid) {
         res.status(403).send("Forbidden");
         return;
       }
       await this.updateItemMetadataCommentNumber(comment.sourceId, "decrement");
-      const deleted: boolean = await FirebaseDAOAdapter.deleteDocument("comments", id);
+      const deleted: boolean = 
+        await FirebaseDAOAdapter.deleteDocument("comments", id);
       res.send({ deleted });
     } else {
       res.status(400).send("Missing commentId");
     }
   }
 
-  async updateItemMetadataCommentNumber(sourceId: string, action: "increment" | "decrement") {
-    const itemMetadata: any = await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [{
+  /**
+   * Updates ItemMetadata comment number
+   * @param sourceId 
+   * @param action 
+   */
+  async updateItemMetadataCommentNumber(sourceId: string, action: "increment" | "decrement"): Promise<void> {
+    const itemMetadata: any = 
+      await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [{
       field: "sourceId",
       operator: "==",
       value: sourceId

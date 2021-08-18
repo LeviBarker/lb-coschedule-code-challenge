@@ -43,7 +43,7 @@ export class SearchController {
         }
       ]);
 
-      if(data?.sourceId){
+      if (data?.sourceId) {
         collectionValueMap[data.sourceId] = data;
       }
 

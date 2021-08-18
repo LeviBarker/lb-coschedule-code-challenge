@@ -34,6 +34,7 @@ module.exports = {
     "new-cap": ["error", { "capIsNew": false }],
     "indent": 0,
     "valid-jsdoc": 0,
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "max-len": ["warn", { "code": 140 }]
   }
 };

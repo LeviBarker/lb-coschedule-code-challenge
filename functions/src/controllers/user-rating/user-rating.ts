@@ -18,11 +18,12 @@ export class UserRatingController {
     async create(req: Request, res: Response): Promise<void> {
         try {
             const liked: boolean = req.body?.firebaseMetadata?.liked;
-            const data: any = await FirebaseDAOAdapter.addDocument("item_metadata", {
-                sourceId: req.body.id,
-                source: req.body.source,
-                likes: liked ? [req.params.userId] : []
-            });
+            const data: any =
+                await FirebaseDAOAdapter.addDocument("item_metadata", {
+                    sourceId: req.body.id,
+                    source: req.body.source,
+                    likes: liked ? [req.params.userId] : []
+                });
             res.send(data);
         } catch (err) {
             res.send(err);
@@ -38,18 +39,19 @@ export class UserRatingController {
         const userRating: UserRating = req.body;
         const uid: string = (req as any).uid;
 
-        let result: any = (await FirebaseDAOAdapter.getCollectionValues("item_metadata", [
-            {
-                field: "sourceId",
-                operator: "==",
-                value: userRating.sourceId
-            },
-            {
-                field: "source",
-                operator: "==",
-                value: userRating.source
-            }
-        ]))?.[0];
+        let result: any =
+            (await FirebaseDAOAdapter.getCollectionValues("item_metadata", [
+                {
+                    field: "sourceId",
+                    operator: "==",
+                    value: userRating.sourceId
+                },
+                {
+                    field: "source",
+                    operator: "==",
+                    value: userRating.source
+                }
+            ]))?.[0];
 
         if (result) {
             const likeSet = new Set([...(result?.likes || [])]);
