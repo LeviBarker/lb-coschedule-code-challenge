@@ -2,7 +2,6 @@
   <mat-toolbar id="app-toolbar" color="primary">
     <div style="display: flex; align-items: baseline;">
       <span class="app-logo-text">Search</span>&nbsp;
-      <span class="mat-caption">powered by GIPHY</span>
     </div>
     <div>
       <button mat-button class="icon-button icon-left" *ngIf="(auth.user$ | async); else signInTemplate" (click)="auth.signOut()">

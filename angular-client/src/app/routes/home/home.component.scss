@@ -61,6 +61,11 @@ $min-item-width: 300px;
 
 .load-more-container{
     width: 100%;
-    text-align: center;
-    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 0 96px;
+    span{
+        margin: 16px 0;
+    }
 }
