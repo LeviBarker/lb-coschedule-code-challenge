@@ -135,7 +135,7 @@ export class FirebaseDAOAdapter {
      * @param data 
      * @returns 
      */
-     static async setDocument<T>(collectionPath: string, data: T | any): Promise<T | any> {
+    static async setDocument<T>(collectionPath: string, data: T | any): Promise<T | any> {
         try {
             const writeResult: FirebaseFirestore.WriteResult =
                 await this.getDocumentRef(collectionPath, data?.id).set(omit(data, ["id"]));
@@ -182,7 +182,7 @@ export class FirebaseDAOAdapter {
         }[] = []): Promise<any> {
         try {
             const collectionValues = await this.getCollectionValues(collectionPath, whereClauses);
-            if(collectionValues.length > 1){
+            if (collectionValues.length > 1) {
                 functions.logger.log(`Multiple values for expected unique value at ${collectionPath} on ${JSON.stringify(whereClauses)}`);
             }
             return collectionValues[0];
