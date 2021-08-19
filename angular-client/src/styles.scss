@@ -1,4 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+@use '~@angular/material' as mat;
+
+@include mat.core();
+
+$primary: mat.define-palette(mat.$blue-palette, 500);
+$accent: mat.define-palette(mat.$orange-palette, A200, A100, A400);
+
+$theme: mat.define-light-theme((
+ color: (
+   primary: $primary,
+   accent: $accent,
+ )
+));
+
+// Emit theme-dependent styles for common features used across multiple components.
+@include mat.core-theme($theme);
+@include mat.all-component-themes($theme);
 
 html,
 body {
@@ -7,6 +24,7 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #f1f1f1;
 }
 
 .full-width-form-field {
@@ -31,6 +49,17 @@ main {
     overflow: auto;
 }
 
+.page-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .page-inner-container{
+        width: 100%;
+        min-width: 300px;
+        max-width: 650px;
+    }
+}
+
 .loading-container {
     display: flex;
     align-items: center;
@@ -52,6 +81,23 @@ main {
             margin-left: 8px;
         }
     }
+}
+
+.link-like{
+    color: rgb(72, 93, 214);
+    cursor: pointer;
+    &:hover{
+        text-decoration: underline;
+    }
+}
+
+// Material Overrides
+.mat-card, .mat-dialog-container{
+    border-radius: 16px !important;
+}
+
+.mat-button-base{
+    border-radius: 8px !important;
 }
 
 @media only screen and (max-width: 600px) {

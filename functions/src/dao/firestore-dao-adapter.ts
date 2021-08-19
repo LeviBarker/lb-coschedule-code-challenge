@@ -130,6 +130,26 @@ export class FirebaseDAOAdapter {
     }
 
     /**
+     * Set Firestore document
+     * @param collectionPath 
+     * @param data 
+     * @returns 
+     */
+     static async setDocument<T>(collectionPath: string, data: T | any): Promise<T | any> {
+        try {
+            const writeResult: FirebaseFirestore.WriteResult =
+                await this.getDocumentRef(collectionPath, data?.id).set(omit(data, ["id"]));
+            if (writeResult) {
+                return data;
+            } else {
+                return null;
+            }
+        } catch (e) {
+            return null;
+        }
+    }
+
+    /**
      * Delete Firestore document by ID
      * @param collectionPath 
      * @param id 
@@ -161,11 +181,11 @@ export class FirebaseDAOAdapter {
             value: any
         }[] = []): Promise<any> {
         try {
-            return (await this.getCollectionRef(collectionPath, whereClauses).limit(1).get())
-                .docs.map((doc: QueryDocumentSnapshot) => ({
-                    id: doc.id,
-                    ...doc.data()
-                }))?.[0];
+            const collectionValues = await this.getCollectionValues(collectionPath, whereClauses);
+            if(collectionValues.length > 1){
+                functions.logger.log(`Multiple values for expected unique value at ${collectionPath} on ${JSON.stringify(whereClauses)}`);
+            }
+            return collectionValues[0];
         } catch (e) {
             functions.logger.error(e);
             return null;

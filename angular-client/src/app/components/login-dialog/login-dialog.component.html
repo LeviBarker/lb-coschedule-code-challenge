@@ -1,7 +1,39 @@
-<section>
-    <p>Login to like and comment</p>
-    <button mat-stroked-button class="login-button" (click)="auth.googleSignIn()">
-        <img class="google-logo" src="../../../assets/images/google-logo.svg" />
-        <span>Continue with Google</span>
-    </button>
-</section> 
+<section class="login-container">
+    <p class="mat-body-strong">Log in to like and comment</p>
+    <div class="email-login-container">
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="example@something.com" [value]="email" (input)="handleEmailInput($event)" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" [type]="displayPassword ? 'text' : 'password'" [value]="password"
+                (input)="handlePasswordInput($event)" />
+            <button matSuffix mat-icon-button (click)="handleDisplayPasswordClick()">
+                <mat-icon>{{displayPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+        </mat-form-field>
+        <div class="email-login-actions">
+            <button mat-button [disabled]="emailButtonsDisabled" (click)="handleSignUpClick()">
+                Sign up
+            </button>
+            <button mat-raised-button [disabled]="emailButtonsDisabled" color="primary" (click)="handleSignInClick()">
+                Log in
+            </button>
+        </div>
+        <div class="mat-caption errors">{{errorMessage}}</div>
+    </div>
+    <div class="break-section">
+        <hr />
+        <span>or continue with</span>
+        <hr />
+    </div>
+    <div class="login-buttons">
+        <button mat-stroked-button (click)="auth.googleSignIn()">
+            <img class="google-logo" src="../../../assets/images/google-logo.svg" />
+            <span>Continue with Google</span>
+        </button>
+    </div>
+
+
+</section>

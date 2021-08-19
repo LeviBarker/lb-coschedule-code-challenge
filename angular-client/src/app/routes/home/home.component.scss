@@ -9,6 +9,17 @@
     }
 }
 
+.empty-state{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 32px;
+    img {
+        width: 95%;
+        max-width: 560px;
+    }
+}
+
 .results-container {
     & > .mat-card {
         margin-top: 16px;
@@ -17,7 +28,7 @@
     .result {
         display: flex;
         .result-image {
-            border-radius: 8px;
+            border-radius: 12px;
             width: 120px;
             height: 120px;
         }

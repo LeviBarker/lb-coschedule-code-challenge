@@ -47,7 +47,7 @@ export class CommentInputComponent implements OnInit {
 
   openLoginDialog() {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '250px',
+      width: '320px',
       data: {}
     });
   }

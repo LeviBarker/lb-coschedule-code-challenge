@@ -70,4 +70,7 @@ export class ItemComponent implements OnInit {
     this.editingCommentId = id;
   }
 
+  handleLaunchClick(){
+    window.open(this.item.images?.original?.url, '_blank');
+  }
 }

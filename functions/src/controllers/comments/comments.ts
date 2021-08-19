@@ -22,7 +22,7 @@ export class CommentsController {
     if (comment.body && comment.sourceId) {
       const data: Comment = await FirebaseDAOAdapter
         .addDocument<Comment>("comments", {
-        author: name || email,
+        author: name === "undefined" ? email : name,
         timestamp: timestamp.now(),
         sourceId: comment.sourceId,
         body: comment.body,

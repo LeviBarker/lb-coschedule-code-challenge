@@ -40,18 +40,13 @@ export class UserRatingController {
         const uid: string = (req as any).uid;
 
         let result: any =
-            (await FirebaseDAOAdapter.getCollectionValues("item_metadata", [
+            await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [
                 {
                     field: "sourceId",
                     operator: "==",
                     value: userRating.sourceId
-                },
-                {
-                    field: "source",
-                    operator: "==",
-                    value: userRating.source
                 }
-            ]))?.[0];
+            ]);
 
         if (result) {
             const likeSet = new Set([...(result?.likes || [])]);

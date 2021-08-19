@@ -1,11 +1,14 @@
-<main id="app-container">
-  <mat-toolbar id="app-toolbar">
-    <div>
-      <span>🔎</span>&nbsp;
+<main id="app-container" class="theme">
+  <mat-toolbar id="app-toolbar" color="primary">
+    <div style="display: flex; align-items: baseline;">
+      <span class="app-logo-text">Search</span>&nbsp;
       <span class="mat-caption">powered by GIPHY</span>
     </div>
     <div>
-      <button mat-button *ngIf="(auth.user$ | async); else signInTemplate" (click)="auth.signOut()">Sign Out</button>
+      <button mat-button class="icon-button icon-left" *ngIf="(auth.user$ | async); else signInTemplate" (click)="auth.signOut()">
+        <mat-icon>logout</mat-icon>
+        <span>Log out</span>
+      </button>
     </div>
   </mat-toolbar>
   <section id="app-content">
@@ -14,5 +17,8 @@
 </main>
 
 <ng-template #signInTemplate>
-  <button mat-button (click)="openLoginDialog()">Sign In</button>
+  <button mat-button class="icon-button icon-left" (click)="openLoginDialog()">
+    <mat-icon>login</mat-icon>
+    <span>Log in</span>
+  </button>
 </ng-template>

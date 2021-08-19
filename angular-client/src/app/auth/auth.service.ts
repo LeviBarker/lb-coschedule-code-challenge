@@ -30,6 +30,27 @@ export class AuthService {
     }
 
     /**
+     * Sign up with email and password
+     * @param email 
+     * @param password 
+     * @returns 
+     */
+    async signUpWithEmailAndPassword(email: string, password: string) {
+        const credential = await this.afAuth.createUserWithEmailAndPassword(email, password);
+        return credential;
+    }
+
+    /**
+     * Sign in with email and password
+     * @param email
+     * @param password 
+     * @returns 
+     */
+    async signInWithEmailAndPassword(email: string, password: string) {
+        const credential = await this.afAuth.signInWithEmailAndPassword(email, password);
+        return credential;
+    }
+    /**
      * Sign out
      */
     async signOut(): Promise<void> {

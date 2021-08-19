@@ -35,7 +35,7 @@ export class SearchController {
     const collectionValueMap: any = {};
 
     await Promise.all(chunks.map(async (chunk: any[]) => {
-      const data: any = await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [
+      const data: any[] = await FirebaseDAOAdapter.getCollectionValues("item_metadata", [
         {
           field: "sourceId",
           operator: "in",
@@ -43,9 +43,11 @@ export class SearchController {
         }
       ]);
 
-      if (data?.sourceId) {
-        collectionValueMap[data.sourceId] = data;
-      }
+      data.forEach((item: any) => {
+        if (item?.sourceId) {
+          collectionValueMap[item?.sourceId] = item;
+        }
+      });
 
       return data;
     }));

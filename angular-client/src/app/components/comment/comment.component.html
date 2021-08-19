@@ -1,8 +1,8 @@
 <div class="comment" *ngIf="comment">
     <div class="mat-body-strong">{{comment.author}}</div>
     <div class="mat-caption">{{comment.timestamp._seconds * 1000 | date}}</div>
-    <p *ngIf="!editing">{{comment.body}}</p>
-    
+    <p *ngIf="!editing" class="comment-body">{{comment.body}}</p>
+
     <mat-form-field *ngIf="editing" appearance="outline">
         <mat-label>Comment</mat-label>
         <textarea matInput [value]="comment.body" (input)="handleCommentInput($event)"></textarea>
@@ -18,10 +18,10 @@
             </button>
         </ng-container>
 
-        <button mat-stroked-button *ngIf="!commentChanged" [disabled]="isSaving" (click)="handleEditClick()">
+        <button mat-stroked-button color="secondary" *ngIf="!commentChanged" [disabled]="isSaving" (click)="handleEditClick()">
             Edit
         </button>
-        <button mat-stroked-button [disabled]="isSaving" (click)="handleDeleteClick()">
+        <button mat-stroked-button color="warn" [disabled]="isSaving" (click)="handleDeleteClick()">
             Delete
         </button>
     </div>

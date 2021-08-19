@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
 
   openLoginDialog(): void {
     this.dialogRef = this.dialog.open(LoginDialogComponent, {
-      width: '250px',
+      width: '320px',
       data: {}
     });
   }
