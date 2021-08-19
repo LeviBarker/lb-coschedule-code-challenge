@@ -1,9 +1,11 @@
 <div class="page-container">
     <div class="page-inner-container">
-        <button mat-raised-button color="primary" class="icon-button icon-left" (click)="goBack()">
-            <mat-icon>arrow_back</mat-icon>
-            <span>Back</span>
-        </button>
+        <div class="item-navigation">
+            <button mat-raised-button color="primary" class="icon-button icon-left" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                <span>Back</span>
+            </button>
+        </div>
         <div class="item-container">
             <div class="item-inner-container" *ngIf="item; else loading">
                 <div class="banner-image" [style.backgroundImage]="'url(' + item.images.original.url + ')'">
@@ -14,7 +16,7 @@
     
                 <div class="mat-title item-title">{{item.title}}</div>
                 <div>
-                    <app-comment-input [sourceId]="sourceId" (onCommentAdded)="handleCommentAdded($event)">
+                    <app-comment-input [sourceId]="sourceId" (commentAdded)="handleCommentAdded($event)">
                     </app-comment-input>
                     <ng-container *ngIf="auth.user$ | async as user; else commentsTemplate">
                         <ng-container *ngTemplateOutlet="commentsTemplate; context: user"></ng-container>
@@ -33,7 +35,7 @@
 
 <ng-template #commentsTemplate let-uid="uid">
     <app-comment *ngFor="let comment of item.comments" [comment]="comment" [uid]="uid"
-        [editing]="comment.id === editingCommentId" (onDeleteClick)="handleDeleteClick($event)"
-        (onEditClick)="handleEditClick($event)">
+        [editing]="comment.id === editingCommentId" (deleteClicked)="handleDeleteClick($event)"
+        (editClicked)="handleEditClick($event)">
     </app-comment>
 </ng-template>

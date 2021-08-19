@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { firebaseApp } from "../../admin";
-import { UserRating } from "../../models/user-rating";
-import { FirebaseDAOAdapter } from "../../dao/firestore-dao-adapter";
+import { Request, Response } from 'express';
+import { firebaseApp } from '../../admin';
+import { UserRating } from '../../models/user-rating';
+import { FirebaseDAOAdapter } from '../../dao/firestore-dao-adapter';
 
 const firestore = firebaseApp.firestore();
 firestore.settings({ ignoreUndefinedProperties: true });
@@ -19,7 +19,7 @@ export class UserRatingController {
         try {
             const liked: boolean = req.body?.firebaseMetadata?.liked;
             const data: any =
-                await FirebaseDAOAdapter.addDocument("item_metadata", {
+                await FirebaseDAOAdapter.addDocument('item_metadata', {
                     sourceId: req.body.id,
                     source: req.body.source,
                     likes: liked ? [req.params.userId] : []
@@ -40,10 +40,10 @@ export class UserRatingController {
         const uid: string = (req as any).uid;
 
         let result: any =
-            await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [
+            await FirebaseDAOAdapter.getUniqueDocumentValue('item_metadata', [
                 {
-                    field: "sourceId",
-                    operator: "==",
+                    field: 'sourceId',
+                    operator: '==',
                     value: userRating.sourceId
                 }
             ]);
@@ -56,14 +56,14 @@ export class UserRatingController {
                 likeSet.delete(uid);
             }
             result.likes = Array.from(likeSet);
-            result = await FirebaseDAOAdapter.updateDocument("item_metadata", result);
+            result = await FirebaseDAOAdapter.updateDocument('item_metadata', result);
         } else {
             result = {
                 sourceId: userRating.sourceId,
                 source: userRating.source,
                 likes: [uid]
             };
-            result = await FirebaseDAOAdapter.addDocument("item_metadata", result);
+            result = await FirebaseDAOAdapter.addDocument('item_metadata', result);
         }
 
         res.send(result);

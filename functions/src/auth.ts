@@ -1,26 +1,26 @@
-import { Request, Response, NextFunction } from "express";
-import { firebaseApp } from "./admin";
+import { Request, Response, NextFunction } from 'express';
+import { firebaseApp } from './admin';
 
 const auth = firebaseApp.auth();
 
 export const tokenMiddleware =
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         if ((!req.headers.authorization ||
-            !req.headers.authorization.startsWith("Bearer ")) &&
+            !req.headers.authorization.startsWith('Bearer ')) &&
             !(req.cookies && req.cookies.__session)) {
-            res.status(401).send("Unauthorized");
+            res.status(401).send('Unauthorized');
             return;
         }
 
         let idToken;
         if (req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer ")) {
-            idToken = req.headers.authorization.split("Bearer ")[1];
+            req.headers.authorization.startsWith('Bearer ')) {
+            idToken = req.headers.authorization.split('Bearer ')[1];
         } else if (req.cookies) {
             idToken = req.cookies.__session;
         } else {
             // No cookie
-            res.status(401).send("Unauthorized");
+            res.status(401).send('Unauthorized');
             return;
         }
 
@@ -32,7 +32,7 @@ export const tokenMiddleware =
             next();
             return;
         } catch (error) {
-            console.error("Error while verifying Firebase ID token:", error);
+            console.error('Error while verifying Firebase ID token:', error);
             res.status(500).send(error);
             return;
         }

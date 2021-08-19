@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Comment } from '../models/comment';
 
-const COMMENTS_URI = "comments";
+const COMMENTS_URI = 'comments';
 
 /**
  * API service for Comments
@@ -36,7 +36,7 @@ export class CommentsService {
    * @param comment 
    * @returns 
    */
-   update(comment: Partial<Comment>): Observable<Comment> {
+  update(comment: Partial<Comment>): Observable<Comment> {
     return this.auth.token$?.pipe(switchMap((token: any) => {
       const headers: any = {};
       if (token) {

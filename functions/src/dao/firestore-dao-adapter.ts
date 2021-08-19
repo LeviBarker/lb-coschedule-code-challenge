@@ -1,7 +1,7 @@
-import { DocumentSnapshot, QueryDocumentSnapshot } from "firebase-functions/v1/firestore";
-import * as functions from "firebase-functions";
-import { omit } from "lodash";
-import { firebaseApp } from "../admin";
+import { DocumentSnapshot, QueryDocumentSnapshot } from 'firebase-functions/v1/firestore';
+import * as functions from 'firebase-functions';
+import { omit } from 'lodash';
+import { firebaseApp } from '../admin';
 
 const firestore = firebaseApp.firestore();
 
@@ -118,7 +118,7 @@ export class FirebaseDAOAdapter {
     static async updateDocument<T>(collectionPath: string, data: T | any): Promise<T | any> {
         try {
             const writeResult: FirebaseFirestore.WriteResult =
-                await this.getDocumentRef(collectionPath, data?.id).update(omit(data, ["id"]));
+                await this.getDocumentRef(collectionPath, data?.id).update(omit(data, ['id']));
             if (writeResult) {
                 return data;
             } else {
@@ -138,7 +138,7 @@ export class FirebaseDAOAdapter {
     static async setDocument<T>(collectionPath: string, data: T | any): Promise<T | any> {
         try {
             const writeResult: FirebaseFirestore.WriteResult =
-                await this.getDocumentRef(collectionPath, data?.id).set(omit(data, ["id"]));
+                await this.getDocumentRef(collectionPath, data?.id).set(omit(data, ['id']));
             if (writeResult) {
                 return data;
             } else {

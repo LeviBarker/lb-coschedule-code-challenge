@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 
-const SEARCH_URI = "search";
+const SEARCH_URI = 'search';
 
 /**
  * API service for searching data source
@@ -26,7 +26,10 @@ export class SearchService {
    * @param text 
    * @returns 
    */
-  search(text: string): Observable<any> {
-    return this.http.get(`${environment.baseAPIPath}${SEARCH_URI}?text=${text}`);
+  search(text: string, offset: number = 0): Observable<any> {
+    let params = new HttpParams()
+      .set('text', text)
+      .set('offset', String(offset));
+    return this.http.get(`${environment.baseAPIPath}${SEARCH_URI}`, {params});
   }
 }

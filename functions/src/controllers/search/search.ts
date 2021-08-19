@@ -1,15 +1,15 @@
-import { Request, Response } from "express";
-import axios, { AxiosResponse } from "axios";
-import * as functions from "firebase-functions";
-import { chunk } from "lodash";
-import { FirebaseDAOAdapter } from "../../dao/firestore-dao-adapter";
+import { Request, Response } from 'express';
+import axios, { AxiosResponse } from 'axios';
+import * as functions from 'firebase-functions';
+import { chunk } from 'lodash';
+import { FirebaseDAOAdapter } from '../../dao/firestore-dao-adapter';
 
 const BASE_PARAMS = {
-  "api_key": functions.config().giphy.key,
-  "lang": "en",
-  "rating": "g",
-  "limit": 25,
-  "offset": 0
+  'api_key': functions.config().giphy.key,
+  'lang': 'en',
+  'rating': 'g',
+  'limit': 25,
+  'offset': 0
 };
 
 /**
@@ -35,10 +35,10 @@ export class SearchController {
     const collectionValueMap: any = {};
 
     await Promise.all(chunks.map(async (chunk: any[]) => {
-      const data: any[] = await FirebaseDAOAdapter.getCollectionValues("item_metadata", [
+      const data: any[] = await FirebaseDAOAdapter.getCollectionValues('item_metadata', [
         {
-          field: "sourceId",
-          operator: "in",
+          field: 'sourceId',
+          operator: 'in',
           value: chunk
         }
       ]);
@@ -77,10 +77,13 @@ export class SearchController {
    */
   async searchGiphy(req: Request, res: Response): Promise<void> {
     try {
-      const giphyResponse: AxiosResponse = await axios.get("https://api.giphy.com/v1/gifs/search", {
+      const offset = req.query.offset ? Number(req.query.offset) : BASE_PARAMS.offset;
+
+      const giphyResponse: AxiosResponse = await axios.get('https://api.giphy.com/v1/gifs/search', {
         params: {
           ...BASE_PARAMS,
-          q: req.query.text
+          q: req.query.text,
+          offset
         }
       });
 
@@ -91,10 +94,10 @@ export class SearchController {
 
       res.send({
         data: this.mergeDataWithSourceMap(collectionResultMap, data),
-        collectionResultMap
+        offset
       });
     } catch (err) {
-      throw new Error("Unable to get GIPHY response");
+      throw new Error('Unable to get GIPHY response');
     }
   }
 
@@ -115,16 +118,16 @@ export class SearchController {
 
       const { data }: { data: any } = giphyResponse.data;
 
-      const comments: Comment[] = await FirebaseDAOAdapter.getCollectionValues("comments", [{
-        field: "sourceId",
-        operator: "==",
+      const comments: Comment[] = await FirebaseDAOAdapter.getCollectionValues('comments', [{
+        field: 'sourceId',
+        operator: '==',
         value: id
       }]);
 
       data.comments = comments;
       res.send(data);
     } catch (err) {
-      throw new Error("Unable to get GIPHY response");
+      throw new Error('Unable to get GIPHY response');
     }
   }
 }

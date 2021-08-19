@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  supportEmail: 'dev.levibarker@gmail.com',
   baseAPIPath: "http://localhost:5001/levi-barker-code-challenge/us-central1/api/",
   firebase: {
     apiKey: "AIzaSyCA3s_YBvUDR60efX14dH-uzHbvJUgpYpI",

@@ -1,21 +1,19 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { AngularFireAuth } from "@angular/fire/auth";
-import firebase from "firebase/app";
-import { tap } from "rxjs/operators";
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase/app';
+import { take } from 'rxjs/operators';
 
 /**
  * Authentication service (using AngularFireAuth)
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    userSubject: BehaviorSubject<any> = new BehaviorSubject(null);
-    user: any;
-    user$: Observable<any>;
-    token$: Observable<any>;
+    user$: Observable<firebase.User | null>;
+    token$: Observable<string | null>;
 
     constructor(private afAuth: AngularFireAuth) { 
-        this.user$ = this.afAuth.authState.pipe(tap((user: any) => this.user = user));
+        this.user$ = this.afAuth.authState;
         this.token$ = this.afAuth.idToken;
     }
 
@@ -55,5 +53,21 @@ export class AuthService {
      */
     async signOut(): Promise<void> {
         await this.afAuth.signOut();
+    }
+
+    /**
+     * Get currently signed in user
+     * @returns
+     */
+    async getUser(): Promise<firebase.User | null> {
+        return await this.afAuth.user.pipe(take(1)).toPromise();
+    }
+
+    /**
+     * Get ID Token
+     * @returns
+     */
+    async getToken(prefix: string = ''): Promise<string | null> {
+        return `${prefix}${await this.afAuth.idToken.pipe(take(1)).toPromise()}`;
     }
 }

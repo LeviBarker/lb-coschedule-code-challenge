@@ -9,6 +9,7 @@ import { SearchService } from 'src/app/api/search.service';
 import { UserRatingService } from 'src/app/api/user-rating.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { LoginDialogComponent } from 'src/app/components/login-dialog/login-dialog.component';
+import firebase from 'firebase/app';
 
 @Component({
   selector: 'app-home',
@@ -21,8 +22,10 @@ export class HomeComponent implements OnInit {
   searchValue: string = '';
   results: any = [];
   searchIsLoading: boolean = false;
+  loadMoreIsLoading: boolean = false;
   dialogRef: MatDialogRef<any> | null = null;
   subscriptions: Subscription = new Subscription();
+  currentOffset: number = 0;
 
   constructor(private snackBar: MatSnackBar,
     private dialog: MatDialog,
@@ -66,16 +69,25 @@ export class HomeComponent implements OnInit {
 
   async handleSearch(): Promise<void> {
     this.searchIsLoading = true;
+    this.results = await this.searchGIPHY();
+    this.searchIsLoading = false;
+  }
 
+  async searchGIPHY(offset?: number){
     try {
-      const user = await this.auth.user;
-      const res: any = await this.searchService.search(this.searchValue).toPromise();
-      this.results = this.processSearchResults(user?.uid, res.data);
+      const user: firebase.User | null = await this.auth.getUser();
+      const res: any = await this.searchService.search(this.searchValue, offset).toPromise();
+      return this.processSearchResults(user?.uid, res.data);
     } catch (e) {
       this.snackBar.open("Unable to get search results");
+      return [];
     }
+  }
 
-    this.searchIsLoading = false;
+  async handleLoadMoreClick(): Promise<void> {
+    this.loadMoreIsLoading = true;
+    this.results = [...this.results, ...(await this.searchGIPHY(this.results.length))];
+    this.loadMoreIsLoading = false;
   }
 
   async handleLikeClick(result: any): Promise<void> {
@@ -116,7 +128,7 @@ export class HomeComponent implements OnInit {
     return Array.from(likeSet);
   }
 
-  processSearchResults(uid: string, data: any[]): any[] {
+  processSearchResults(uid: string | undefined | null, data: any[]): any[] {
     if (!uid) {
       return data;
     }

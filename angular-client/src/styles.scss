@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@use 'sass:map';
 @use '~@angular/material' as mat;
 
 @include mat.core();
@@ -13,6 +14,13 @@ $theme: mat.define-light-theme((
  )
 ));
 
+
+$color-config:    mat.get-color-config($theme);
+$primary-palette: map.get($color-config, 'primary');
+$accent-palette:  map.get($color-config, 'accent');
+$warn-palette:    map.get($color-config, 'warn');
+$is-dark-theme:   map.get($color-config, 'is-dark');
+
 // Emit theme-dependent styles for common features used across multiple components.
 @include mat.core-theme($theme);
 @include mat.all-component-themes($theme);
@@ -25,6 +33,11 @@ body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
     background-color: #f1f1f1;
+}
+
+.test {
+    background-color: mat.get-color-from-palette($primary-palette, '500');
+    color: mat.get-color-from-palette($primary-palette, '500-contrast');
 }
 
 .full-width-form-field {
@@ -43,20 +56,26 @@ main {
 }
 
 #app-content {
-    padding: 16px;
     height: calc(100vh - 64px);
     box-sizing: border-box;
-    overflow: auto;
+    overflow: hidden;
+    position: relative;
 }
 
 .page-container{
     width: 100%;
+    height: 100%;
+    overflow: auto;
     display: flex;
     justify-content: center;
     .page-inner-container{
         width: 100%;
-        min-width: 300px;
-        max-width: 650px;
+
+        &:not(.full-width){
+            min-width: 300px;
+            max-width: 650px;
+        }
+       
     }
 }
 

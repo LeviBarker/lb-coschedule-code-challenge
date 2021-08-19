@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { UserRating } from '../models/user-rating';
 import { Observable } from 'rxjs';
 
-const USER_RATING_URI = "user-rating";
+const USER_RATING_URI = 'user-rating';
 
 /**
  * API service for rating items

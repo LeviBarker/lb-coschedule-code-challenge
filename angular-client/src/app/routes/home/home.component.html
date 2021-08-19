@@ -1,49 +1,60 @@
 <div class="page-container">
-  <div class="page-inner-container">
-    <div class="search-container">
-      <div class="search-input-container">
-        <mat-form-field appearance="outline" class="full-width-form-field">
-          <mat-label>GIPHY Search</mat-label>
-          <input matInput placeholder="GIPHY Search" (keydown.enter)="handleSearch()" [value]="searchValue"
-            (input)="handleSearchInput($event)">
-          <button matSuffix mat-icon-button color="primary" (click)="handleSearch()">
-            <mat-icon>search</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-
-    </div>
+  <div class="page-inner-container full-width">
+    <mat-toolbar color="primary" class="input-toolbar">
+      <mat-form-field class="full-width-form-field">
+        <mat-label>GIPHY Search</mat-label>
+        <input matInput placeholder="GIPHY Search" (keydown.enter)="handleSearch()" [value]="searchValue"
+          (input)="handleSearchInput($event)">
+        <button matSuffix mat-icon-button (click)="handleSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-toolbar>
+  
     <div class="results-container">
-      <div *ngIf="searchIsLoading; else resultsTemplate" class="loading-container">
-        <mat-spinner></mat-spinner>
+      <div class="results-inner-container">
+        <div *ngIf="searchIsLoading; else resultsTemplate" class="loading-container">
+          <mat-spinner></mat-spinner>
+        </div>
       </div>
     </div>
 
-
-    <ng-template #resultsTemplate>
-      <div *ngIf="!results?.length" class="empty-state">
-        <img src="../../../assets/images/undraw_blank_canvas_3rbb.svg" />
-      </div>
-      <mat-card class="result" *ngFor="let result of results">
-        <img class="result-image" [src]="result?.images?.preview_gif.url" />
-        <div class="result-content">
-          <div>
-            <div class="mat-body-strong">{{result?.title || 'No name'}}</div>
-            <div class="mat-caption" *ngIf="result?.username">Uploaded by {{result.username}}</div>
-          </div>
-          <div class="result-actions">
-            <button mat-button color="primary" (click)="handleCommentClick(result)">
-              <mat-icon>comment</mat-icon>
-              <span
-                *ngIf="result?.firebaseMetadata?.numberOfComments as numberOfComments">&nbsp;{{numberOfComments}}</span>
-            </button>
-            <button mat-button color="warn" (click)="handleLikeClick(result)">
-              <mat-icon>{{result?.liked ? 'favorite' : 'favorite_border'}}</mat-icon>
-              <span *ngIf="result?.firebaseMetadata?.likes?.length as likes">&nbsp;{{likes}}</span>
-            </button>
-          </div>
-        </div>
-      </mat-card>
-    </ng-template>
   </div>
 </div>
+
+<ng-template #resultsTemplate>
+  <ng-container *ngIf="results?.length; else emptyState">
+    <mat-card class="result" *ngFor="let result of results">
+      <div class="result-image" [style.backgroundImage]="'url(' + result?.images?.preview_gif?.url + ')'">
+      </div>
+      <div class="result-content">
+        <div>
+          <div class="mat-body-strong">{{result?.title || 'No name'}}</div>
+          <div class="mat-caption" *ngIf="result?.username">Uploaded by {{result.username}}</div>
+        </div>
+        <div class="result-actions">
+          <button mat-button color="primary" (click)="handleCommentClick(result)">
+            <mat-icon>comment</mat-icon>
+            <span
+              *ngIf="result?.firebaseMetadata?.numberOfComments as numberOfComments">&nbsp;{{numberOfComments}}</span>
+          </button>
+          <button mat-button color="warn" (click)="handleLikeClick(result)">
+            <mat-icon>{{result?.liked ? 'favorite' : 'favorite_border'}}</mat-icon>
+            <span *ngIf="result?.firebaseMetadata?.likes?.length as likes">&nbsp;{{likes}}</span>
+          </button>
+        </div>
+      </div>
+    </mat-card>
+    <div class="load-more-container">
+      <button mat-stroked-button [disabled]="loadMoreIsLoading" (click)="handleLoadMoreClick()">
+        {{loadMoreIsLoading ? 'Loading more GIFs' : 'Load more'}}
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #emptyState>
+  <div *ngIf="!results?.length" class="empty-state">
+    <img src="../../../assets/images/undraw_blank_canvas_3rbb.svg" />
+  </div>
+</ng-template>

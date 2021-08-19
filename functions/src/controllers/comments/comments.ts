@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import { timestamp } from "../../admin";
-import { FirebaseDAOAdapter } from "../../dao/firestore-dao-adapter";
-import { Comment } from "../../models/comment";
-import { get } from "lodash";
+import { Request, Response } from 'express';
+import { timestamp } from '../../admin';
+import { FirebaseDAOAdapter } from '../../dao/firestore-dao-adapter';
+import { Comment } from '../../models/comment';
+import { get } from 'lodash';
 
 /**
  * @description CommentsController
@@ -21,19 +21,19 @@ export class CommentsController {
 
     if (comment.body && comment.sourceId) {
       const data: Comment = await FirebaseDAOAdapter
-        .addDocument<Comment>("comments", {
-        author: name === "undefined" ? email : name,
+        .addDocument<Comment>('comments', {
+        author: name === 'undefined' ? email : name,
         timestamp: timestamp.now(),
         sourceId: comment.sourceId,
         body: comment.body,
         uid
       });
 
-      await this.updateItemMetadataCommentNumber(comment.sourceId, "increment");
+      await this.updateItemMetadataCommentNumber(comment.sourceId, 'increment');
 
       res.send(data);
     } else {
-      res.status(400).send("Missing body or sourceId");
+      res.status(400).send('Missing body or sourceId');
     }
   }
 
@@ -45,7 +45,7 @@ export class CommentsController {
   async read(req: Request, res: Response): Promise<void> {
     const id: string = req.params.id;
     if (id) {
-      const data: any = await FirebaseDAOAdapter.getDocumentData("comments", id);
+      const data: any = await FirebaseDAOAdapter.getDocumentData('comments', id);
       res.send(data);
     }
   }
@@ -60,11 +60,11 @@ export class CommentsController {
     const comment: Comment = req.body;
     if (comment.id) {
       const data: Comment = 
-        await FirebaseDAOAdapter.updateDocument<Comment>("comments", comment);
+        await FirebaseDAOAdapter.updateDocument<Comment>('comments', comment);
       res.send(data);
       return;
     }
-    res.status(400).send("ID is required");
+    res.status(400).send('ID is required');
   }
 
   /**
@@ -79,17 +79,17 @@ export class CommentsController {
 
     if (id) {
       const comment: Comment = 
-        await FirebaseDAOAdapter.getDocumentData("comments", id) as Comment;
+        await FirebaseDAOAdapter.getDocumentData('comments', id) as Comment;
       if (comment.uid !== uid) {
-        res.status(403).send("Forbidden");
+        res.status(403).send('Forbidden');
         return;
       }
-      await this.updateItemMetadataCommentNumber(comment.sourceId, "decrement");
+      await this.updateItemMetadataCommentNumber(comment.sourceId, 'decrement');
       const deleted: boolean = 
-        await FirebaseDAOAdapter.deleteDocument("comments", id);
+        await FirebaseDAOAdapter.deleteDocument('comments', id);
       res.send({ deleted });
     } else {
-      res.status(400).send("Missing commentId");
+      res.status(400).send('Missing commentId');
     }
   }
 
@@ -98,17 +98,17 @@ export class CommentsController {
    * @param sourceId 
    * @param action 
    */
-  async updateItemMetadataCommentNumber(sourceId: string, action: "increment" | "decrement"): Promise<void> {
+  async updateItemMetadataCommentNumber(sourceId: string, action: 'increment' | 'decrement'): Promise<void> {
     const itemMetadata: any = 
-      await FirebaseDAOAdapter.getUniqueDocumentValue("item_metadata", [{
-      field: "sourceId",
-      operator: "==",
+      await FirebaseDAOAdapter.getUniqueDocumentValue('item_metadata', [{
+      field: 'sourceId',
+      operator: '==',
       value: sourceId
     }]);
 
-    let numberOfComments = get(itemMetadata, "numberOfComments", 0);
+    let numberOfComments = get(itemMetadata, 'numberOfComments', 0);
 
-    if (action === "increment") {
+    if (action === 'increment') {
       numberOfComments += 1;
     } else {
       numberOfComments -= 1;
@@ -122,14 +122,14 @@ export class CommentsController {
         id: itemMetadata.id,
         numberOfComments
       };
-      await FirebaseDAOAdapter.updateDocument("item_metadata", updateValue);
+      await FirebaseDAOAdapter.updateDocument('item_metadata', updateValue);
     } else {
       const insertValue: any = {
         likes: [],
         sourceId,
         numberOfComments
       };
-      await FirebaseDAOAdapter.addDocument("item_metadata", insertValue);
+      await FirebaseDAOAdapter.addDocument('item_metadata', insertValue);
     }
   }
 }

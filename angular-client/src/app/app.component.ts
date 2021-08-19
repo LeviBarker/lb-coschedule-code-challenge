@@ -1,14 +1,7 @@
-import { HttpResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SearchService } from './api/search.service';
-import { take, finalize } from 'rxjs/operators';
+import { Component } from '@angular/core';
 import { AuthService } from './auth/auth.service';
-import { Subscription } from 'rxjs';
-import { UserRatingService } from './api/user-rating.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
-import { set } from 'lodash';
 
 @Component({
   selector: 'app-root',

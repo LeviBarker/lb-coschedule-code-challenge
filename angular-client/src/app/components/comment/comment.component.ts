@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { CommentsService } from 'src/app/api/comments.service';
 import { Comment } from '../../models/comment';
 import { take } from "rxjs/operators";
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-comment',
@@ -16,8 +16,8 @@ export class CommentComponent implements OnChanges {
   @Input() editing: boolean = false;
   @Input() uid: string | null = null;
 
-  @Output() onDeleteClick: EventEmitter<string> = new EventEmitter();
-  @Output() onEditClick: EventEmitter<string | null> = new EventEmitter();
+  @Output() deleteClicked: EventEmitter<string> = new EventEmitter();
+  @Output() editClicked: EventEmitter<string | null> = new EventEmitter();
 
   commentChanged: boolean = false;
   isSaving: boolean = false;
@@ -34,11 +34,11 @@ export class CommentComponent implements OnChanges {
 
   handleDeleteClick() {
     this.isSaving = true;
-    this.onDeleteClick.emit(String(this.comment?.id));
+    this.deleteClicked.emit(String(this.comment?.id));
   }
 
   handleEditClick() {
-    this.onEditClick.emit(this.comment?.id);
+    this.editClicked.emit(this.comment?.id);
   }
 
   async handleSaveClick() {
@@ -49,7 +49,7 @@ export class CommentComponent implements OnChanges {
     }).pipe(take(1)).toPromise();
     this.isSaving = false;
     this.commentChanged = false;
-    this.onEditClick.emit(null);
+    this.editClicked.emit(null);
     this.originalComment = comment;
   }
 
@@ -61,7 +61,7 @@ export class CommentComponent implements OnChanges {
   }
 
   handleCancelClick(){
-    this.onEditClick.emit(null);
+    this.editClicked.emit(null);
     this.commentChanged = false;
     this.comment = this.originalComment;
   }
