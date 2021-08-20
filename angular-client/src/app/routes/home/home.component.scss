@@ -32,6 +32,7 @@ $min-item-width: 300px;
     justify-content: center;
 }
 .results-inner-container {
+    width: 100%;
     min-width: $min-item-width;
     max-width: $max-item-width;
     & > .mat-card {
